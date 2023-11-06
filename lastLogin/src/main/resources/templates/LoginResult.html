@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Welcome to our application, <span th:text="${user.nickname}">User</span>!</h1>
+<p>Your email: <span th:text="${user.email}">N/A</span></p>
+<img th:src="${user.thumbnail_image}" alt="">
+
+<a href="/index.html">메인으로</a>
+</body>
+</html>
