@@ -1,12 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:youngTest
     driverClassName: org.h2.Driver
     username: sa
     password:
+  # h2 setting info
   h2:
     console:
-      enabled: true
+      enabled: true # 사용여부
       path: /h2-console
   jpa:
     hibernate:
@@ -15,8 +16,8 @@ spring:
 
 kakao:
   api:
-    key: "${kakao.api.key}"
+    key: "5dfdad8618a37c87924127904d16737c"
   secret:
-    key: "${kakao.secret.key}"
+    key: "RqPVsc3ivCKBW5fhU8jfGeu23aZPVO3J"
   redirect:
-    uri : "${kakao.redirect.uri}"
+    uri : "http://localhost:8080/oauth/kakao"
