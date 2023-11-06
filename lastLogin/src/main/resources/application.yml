@@ -1,14 +1,14 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:youngTest
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
   # h2 setting info
+  datasource:
+    url: jdbc:h2:mem:youngTest # h2 접속정보
+    driverClassName: org.h2.Driver # Database를 h2로 사용하겠다
+    username: sa # 접속시 입력할 username
+    password:
   h2:
     console:
       enabled: true # 사용여부
-      path: /h2-console
+      path: /h2-console # H2 console path
   jpa:
     hibernate:
       ddl-auto: create
