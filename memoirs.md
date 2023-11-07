@@ -23,4 +23,19 @@ h2 데이터를 연결완료<br>
 h2데이터 연동 작업을 완료 했으나 entity에서 생성한 table을 불러올 수 없음<br>
 spring boot 띄운 콘솔에서 Database available 'jdbc:h2:mem:'<br>
 해당 코드를 잘 확인해서 JDBC URL에 주소 수정 -> table확인 성공!<br><br>
-카카오 사용자 정보 가져와서 홈페이지 가입과 연동 하기 작업 진행할 예정
+카카오 사용자 정보 가져와서 홈페이지 가입과 연동 하기 작업 진행할 예정<br><br><br>
+
+
+
+#### 23.11.07
+카카오 로그인후 받아온 사용자 정보를 가지고 홈페이지 회원가입 완료<br>
+
+entity에서 provider 추가<br>
+소셜 로그인 시 패스워드 불필요 - null허용<br>
+service에서 소셜 로그인 함수 생성 <br><br><br>
+기존의 join과는 다르기때문에 새로 생성해줌
+
+카카오 로그인 - 코드 발급 - 발급 받은 코드로 assessToken 발급 - 발급 받은 토큰으로 사용자 정보 요청 - 요청한 정보 kakaoResponse에 넣어줌 - UserRequest.JoinDTO에 정보 넣기 (소셜 회원가입 완료) - h2에서 확인완료<br><br>
+
+받아온 정보를 JoinDTO에 setter 해준뒤 소셜 로그인 함수 실행<br>
+테이블에 넣어주기, h2 database 확인 완료
