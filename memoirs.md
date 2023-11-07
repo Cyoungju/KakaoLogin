@@ -9,7 +9,7 @@ objectmapper에서 오류 이슈 발생 - 해결완료 <br><Br>
 
 #### 23.11.03
 RestTemplet => webclient 로 소스 코드 수정 완료 <br>
-(RestTemplate은 Spring 5부터 deprecated되었으며, WebClient는 Non-blocking I/O를 지원하고 더욱 유연한 API를 제공힘.)<br>
+(RestTemplate은 Spring 5부터 deprecated되었으며, WebClient는 Non-blocking I/O를 지원하고 더욱 유연한 API를 제공함.)<br>
 로그아웃 기능 구현 완료<br><br>
 리다이렉트 주소와 mapping 주소의 불일치로 500에러뜸 <br>
 로그아웃 기능 이슈 해결 완료 <Br><Br><Br>
