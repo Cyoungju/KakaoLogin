@@ -57,6 +57,7 @@ public class KakaoController {
         UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
         requestDTO.setEmail(user.getEmail());
         requestDTO.setUsername(user.getNickname());
+        requestDTO.setProvider("kakao");
         // 필요한 다른 정보도 설정
 
         // 회원가입 메서드 호출
