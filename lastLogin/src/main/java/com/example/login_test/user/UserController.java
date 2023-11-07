@@ -2,6 +2,7 @@ package com.example.login_test.user;
 
 import com.example.login_test.core.security.JwtTokenProvider;
 import com.example.login_test.core.utils.ApiUtils;
+import com.example.login_test.kakao.KakaoResponse;
 import com.example.login_test.kakao.KakaoService;
 import com.example.login_test.kakao.KakaoToken;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class UserController {
     @PostMapping("/check")
     public ResponseEntity<?> check(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Error error) {
         userService.checkEmail(requestDTO.getEmail());
+        //userService.findAll();
+
         return ResponseEntity.ok( ApiUtils.success(null) );
     }
 
@@ -46,6 +49,7 @@ public class UserController {
         return ResponseEntity.ok().header(JwtTokenProvider.HEADER, jwt)
                 .body(ApiUtils.success(null));
     }
+
 
 }
 

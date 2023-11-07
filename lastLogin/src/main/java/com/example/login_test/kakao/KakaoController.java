@@ -1,9 +1,14 @@
 package com.example.login_test.kakao;
 
+import com.example.login_test.core.error.exception.Exception400;
+import com.example.login_test.core.error.exception.Exception500;
+import com.example.login_test.user.UserRequest;
+import com.example.login_test.user.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SystemUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +21,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +33,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class KakaoController {
     private final KakaoService kakaoService;
-
+    private final UserService userService;
 
     //redirect 경로 mapping
     @GetMapping("/oauth/kakao")
@@ -40,20 +47,22 @@ public class KakaoController {
 
         //추가됨: 유저정보 요청
         KakaoResponse user = kakaoService.requestUser(kakaoToken.getAccess_token());
+
         log.info("user = {}",user);
 
-//        return ResponseEntity.ok().header(JwtTokenProvider.HEADER, kakaoToken.getAccess_token())
-//                .body(ApiUtils.success(user));
-
-//        ModelAndView modelAndView = new ModelAndView("LoginResult"); // "index"는 Thymeleaf 템플릿 파일명
-//        modelAndView.addObject("user", user);
-//
         session.setAttribute("access_token", kakaoToken.getAccess_token());
 
         log.info("토큰: " + String.valueOf(session.getAttribute("access_token")));
 
-        return "redirect:/";
+        UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
+        requestDTO.setEmail(user.getEmail());
+        requestDTO.setUsername(user.getNickname());
+        // 필요한 다른 정보도 설정
 
+        // 회원가입 메서드 호출
+        userService.socialJoin(requestDTO);
+
+        return "redirect:/";
     }
 
     @RequestMapping(value="/kakao/logout")

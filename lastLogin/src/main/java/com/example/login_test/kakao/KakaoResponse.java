@@ -8,7 +8,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class KakaoResponse {
-    Long id;
+    private Long id;
     private String email;
     private String nickname;
     private String thumbnail_image;

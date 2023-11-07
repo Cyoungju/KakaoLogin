@@ -5,7 +5,6 @@ import com.example.login_test.core.error.exception.Exception401;
 import com.example.login_test.core.error.exception.Exception500;
 import com.example.login_test.core.security.CustomUserDetails;
 import com.example.login_test.core.security.JwtTokenProvider;
-import com.example.login_test.core.utils.SignUpMessageSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,13 +36,13 @@ public class UserService {
     @Transactional
     public void join(UserRequest.JoinDTO requestDTO) {
         checkEmail(requestDTO.getEmail());
-
-        String encodedPassword = passwordEncoder.encode( requestDTO.getPassword());
-
-        requestDTO.setPassword(encodedPassword);
+//
+//        String encodedPassword = passwordEncoder.encode( requestDTO.getPassword());
+//
+//        requestDTO.setPassword(encodedPassword);
 
         try {
-            userRepository.save(requestDTO.toEntity());
+            userRepository.save(requestDTO.toEntity(passwordEncoder));
 
 //            SignUpMessageSender.sendMessage("", requestDTO.getPhoneNumber()
 //                ,"환영합니다. 회원가입이 완료되었습니다.");
@@ -52,6 +51,18 @@ public class UserService {
             throw new Exception500(e.getMessage());
         }
     }
+
+    @Transactional
+    public void socialJoin(UserRequest.JoinDTO requestDTO) {
+        findByEmailAndProvider(requestDTO.getEmail(), "kakao");
+        try {
+            userRepository.save(requestDTO.toEntity());
+
+        }catch (Exception e){
+            throw new Exception500(e.getMessage());
+        }
+    }
+
 
     public String login(UserRequest.JoinDTO requestDTO) {
         // ** 인증 작업.
@@ -75,6 +86,8 @@ public class UserService {
         }
     }
 
+
+
     public void findAll() {
         List<User> all = userRepository.findAll();
         for(User user : all){
@@ -88,6 +101,15 @@ public class UserService {
         if(users.isPresent()) {
             throw new Exception400("이미 존재하는 이메일 입니다. : " + email);
         }
+    }
+
+    public UserRequest findByEmailAndProvider(String email, String provider){
+        // 동일한 이메일이 있는지 확인.
+        Optional<User> users = userRepository.findByEmailAndProvider(email, provider);
+        if(users.isPresent()) {
+            throw new Exception400("이미 존재하는 이메일 입니다. : " + email);
+        }
+        return null;
     }
 }
 

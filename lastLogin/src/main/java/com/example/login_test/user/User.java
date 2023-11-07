@@ -1,5 +1,6 @@
 package com.example.login_test.user;
 
+import com.example.login_test.user.StringArrayConverter;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +36,7 @@ Entity 클래스의 인스턴스는 JPA나 해당 클래스의 정적 팩토리 
 // ** JPA(Java Persistence API)에서 사용됨.
 // ** Entity 클래스가 매핑될 데이터베이스의 테이블을 지정
 // ** name="user_tb" = 테이블의 이름 설정
-@Table(name="user_tb")
+@Table(name="USERTB")
 public class User{
 
     // ** 해당 필드를 PK로 지정
@@ -59,13 +60,16 @@ public class User{
     private String email;
 
 
-    @Column(length = 256, nullable = false)
+    @Column(length = 256)
     private String password;
 
     @Column(length = 45, nullable = false)
     private String username;
 
-    @Column(length = 11, nullable = false)
+    @Column(length = 100)
+    private String provider;
+
+    @Column(length = 11)
     private String phoneNumber;
 
     @Column(length = 30)
@@ -77,19 +81,23 @@ public class User{
     // ** ROLE_USER 등등...
 
 
+
+
     /* @Builder 어노테이션은 Lombok 라이브러리에서 제공.
      * 빌더 패턴을 쉽게 구현할 수 있게 도와준다.
      * 주로 생성자의 인자가 많거나, 인자를 선택적으로 지정해야하는 경우에 사용.
      * */
     @Builder
-    public User(int id, String email, String password, String username, String phoneNumber, List<String> roles) {
+    public User(int id, String email, String password, String username, String provider, String phoneNumber, List<String> roles) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.username = username;
+        this.provider = provider;
         this.phoneNumber = phoneNumber;
         this.roles = roles; //회원 권한
     }
+
 
     public void output(){
         System.out.println(id);

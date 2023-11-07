@@ -1,5 +1,6 @@
 package com.example.login_test.user;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collections;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserRequest {
 
@@ -47,15 +49,29 @@ public class UserRequest {
         @NotEmpty
         private String username;
 
+        private String provider;
+
         @NotEmpty
         @Pattern(regexp = "^[0-9]{10,11}$", message = "휴대폰 번호는 숫자 10~11자리만 가능합니다.")
         private String phoneNumber;
 
+
+        @Builder
+        public User toEntity(PasswordEncoder passwordEncoder) {
+            return User.builder()
+                    .email(email)
+                    .password(passwordEncoder.encode(password))
+                    .username(username)
+                    .phoneNumber(phoneNumber)
+                    .roles(Collections.singletonList("ROLE_USER"))
+                    .build();
+        }
+        @Builder
         public User toEntity() {
             return User.builder()
                     .email(email)
-                    .password(password)
                     .username(username)
+                    .provider(provider)
                     .phoneNumber(phoneNumber)
                     .roles(Collections.singletonList("ROLE_USER"))
                     .build();
