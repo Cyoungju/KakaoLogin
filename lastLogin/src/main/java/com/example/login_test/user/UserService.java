@@ -52,16 +52,6 @@ public class UserService {
         }
     }
 
-    @Transactional
-    public void socialJoin(UserRequest.JoinDTO requestDTO) {
-        findByEmailAndProvider(requestDTO.getEmail(), requestDTO.getProvider());
-        try {
-            userRepository.save(requestDTO.toEntity());
-
-        }catch (Exception e){
-            throw new Exception500(e.getMessage());
-        }
-    }
 
 
     public String login(UserRequest.JoinDTO requestDTO) {

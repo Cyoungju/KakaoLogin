@@ -1,10 +1,15 @@
 package com.example.login_test.kakao;
 
+import com.example.login_test.core.security.JwtTokenProvider;
+import com.example.login_test.user.User;
+import com.example.login_test.user.UserRepository;
+import com.example.login_test.user.UserRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -16,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 
 @Slf4j
@@ -23,12 +29,15 @@ import java.util.HashMap;
 public class KakaoService {
     private final WebClient webClient;
     private final KakaoUri kakaoUri;
+    private final UserRepository userRepository;
+    private final KakaoResponse kakaoResponse;
 
-    public KakaoService(WebClient.Builder webClientBuilder, KakaoUri kakaoUri) {
+    public KakaoService(WebClient.Builder webClientBuilder, KakaoUri kakaoUri, UserRepository userRepository, KakaoResponse kakaoResponse) {
         this.webClient = webClientBuilder.baseUrl("https://kauth.kakao.com").build();
         this.kakaoUri = kakaoUri;
+        this.userRepository = userRepository;;
+        this.kakaoResponse = kakaoResponse;;
     }
-
 
     //인증코드로 token요청하기
     public KakaoToken requestToken(String code) {
@@ -116,7 +125,6 @@ public class KakaoService {
                         }
 
                         // KakaoResponse 객체 생성 및 값 설정
-                        KakaoResponse kakaoResponse = new KakaoResponse();
                         kakaoResponse.setEmail(email);
                         kakaoResponse.setId(id);
                         kakaoResponse.setNickname(nickname);
@@ -144,6 +152,21 @@ public class KakaoService {
         }
     }
 
+    @Transactional
+    public String kakaoLogin() {
+        log.info("email"+kakaoResponse.getEmail());
+        User user = userRepository.findByEmailAndProvider(kakaoResponse.getEmail(), kakaoResponse.getProvider())
+                .orElseGet(() -> userRepository.save(User.builder()
+                        .email(kakaoResponse.getEmail())
+                        .username(kakaoResponse.getNickname())
+                        .provider("kakao")
+                        .roles(Collections.singletonList("ROLE_USER"))
+                        .build()));
+
+        log.info(JwtTokenProvider.create(user));
+        //회원가입하고 저장
+        return JwtTokenProvider.create(user);
+    }
     public void kakaoLogout(String accessToken) {
 
         log.info("logout 시작");

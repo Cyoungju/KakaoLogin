@@ -2,6 +2,8 @@ package com.example.login_test.kakao;
 
 import com.example.login_test.core.error.exception.Exception400;
 import com.example.login_test.core.error.exception.Exception500;
+import com.example.login_test.user.User;
+import com.example.login_test.user.UserRepository;
 import com.example.login_test.user.UserRequest;
 import com.example.login_test.user.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +36,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class KakaoController {
     private final KakaoService kakaoService;
+
     private final UserService userService;
 
     //redirect 경로 mapping
@@ -46,22 +50,16 @@ public class KakaoController {
         log.info("kakoToken = {}", kakaoToken);
 
         //추가됨: 유저정보 요청
-        KakaoResponse user = kakaoService.requestUser(kakaoToken.getAccess_token());
+        KakaoResponse kakaoResponse = kakaoService.requestUser(kakaoToken.getAccess_token());
 
-        log.info("user = {}",user);
+        log.info("user = {}",kakaoResponse);
 
         session.setAttribute("access_token", kakaoToken.getAccess_token());
 
         log.info("토큰: " + String.valueOf(session.getAttribute("access_token")));
 
-        UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
-        requestDTO.setEmail(user.getEmail());
-        requestDTO.setUsername(user.getNickname());
-        requestDTO.setProvider("kakao");
-        // 필요한 다른 정보도 설정
+        kakaoService.kakaoLogin();
 
-        // 회원가입 메서드 호출
-        userService.socialJoin(requestDTO);
 
         return "redirect:/";
     }
