@@ -5,17 +5,21 @@ import com.example.login_test.core.utils.ApiUtils;
 import com.example.login_test.kakao.KakaoResponse;
 import com.example.login_test.kakao.KakaoService;
 import com.example.login_test.kakao.KakaoToken;
+import com.example.login_test.kakao.KakaoUri;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RequiredArgsConstructor
-@RestController
+@Controller
 public class UserController {
 
     private final UserService userService;
+    private final KakaoUri kakaoUri;
 
     /* @Valid = 받아온 폼의 데이터 유효성을 검사하는 역할을 수행.
      *  - @RequestBody, @ModelAttribute 와 함께 사용한다.
@@ -25,6 +29,13 @@ public class UserController {
      * @RequestBody
      * JSON 으로 넘어오는 데이터를 UserRequest.LoginDTO 형태로 변경 해주는 역할.
      */
+
+    @GetMapping("/join")
+    public String join(Model model) {
+        model.addAttribute("api", kakaoUri.getAPI_KEY());
+        model.addAttribute("redirect", kakaoUri.getREDIRECT_URI());
+        return "join"; // "join.html" 파일을 렌더링
+    }
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Error error) {
 

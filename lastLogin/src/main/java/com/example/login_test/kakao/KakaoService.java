@@ -21,19 +21,12 @@ import java.util.HashMap;
 @Slf4j
 @Service
 public class KakaoService {
-    @Value("${kakao.api.key}")
-    private String API_KEY; // REST API 키
-
-    @Value("${kakao.secret.key}")
-    private String SECRET_KEY;
-
-    @Value("${kakao.redirect.uri}")
-    private String REDIRECT_URI;
-
     private final WebClient webClient;
+    private final KakaoUri kakaoUri;
 
-    public KakaoService(WebClient.Builder webClientBuilder) {
+    public KakaoService(WebClient.Builder webClientBuilder, KakaoUri kakaoUri) {
         this.webClient = webClientBuilder.baseUrl("https://kauth.kakao.com").build();
+        this.kakaoUri = kakaoUri;
     }
 
 
@@ -47,10 +40,10 @@ public class KakaoService {
             MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
             //파라미터 추가
             requestBody.add("grant_type", "authorization_code");
-            requestBody.add("client_id", API_KEY);
-            requestBody.add("redirect_uri", REDIRECT_URI);
+            requestBody.add("client_id", kakaoUri.getAPI_KEY());
+            requestBody.add("redirect_uri", kakaoUri.getREDIRECT_URI());
             requestBody.add("code", code);
-            requestBody.add("client_secret", SECRET_KEY);
+            requestBody.add("client_secret", kakaoUri.getSECRET_KEY());
 
             KakaoToken kakaoToken = webClient.post()
                     .uri(requestUrl)
