@@ -2,6 +2,8 @@ package com.example.login_test.kakao;
 
 import com.example.login_test.core.error.exception.Exception400;
 import com.example.login_test.core.error.exception.Exception500;
+import com.example.login_test.core.security.JwtTokenProvider;
+import com.example.login_test.core.utils.ApiUtils;
 import com.example.login_test.user.User;
 import com.example.login_test.user.UserRepository;
 import com.example.login_test.user.UserRequest;
@@ -15,16 +17,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -41,7 +41,7 @@ public class KakaoController {
 
     //redirect 경로 mapping
     @GetMapping("/oauth/kakao")
-    public String kakaoLogin(@RequestParam String code, HttpSession session){
+    public RedirectView kakaoLogin(@RequestParam String code, HttpSession session, HttpServletResponse response) throws IOException {
 
         System.out.println("code = " + code);
 
@@ -58,11 +58,11 @@ public class KakaoController {
 
         log.info("토큰: " + String.valueOf(session.getAttribute("access_token")));
 
-        kakaoService.kakaoLogin();
+        kakaoService.kakaoLogin(response);
 
-
-        return "redirect:/";
+        return new RedirectView("/");
     }
+
 
     @RequestMapping(value="/kakao/logout")
     public RedirectView logout(HttpSession session) {

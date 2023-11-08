@@ -1,5 +1,6 @@
 package com.example.login_test.kakao;
 
+import com.example.login_test.core.error.exception.Exception401;
 import com.example.login_test.core.security.JwtTokenProvider;
 import com.example.login_test.user.User;
 import com.example.login_test.user.UserRepository;
@@ -16,9 +17,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -37,6 +40,36 @@ public class KakaoService {
         this.kakaoUri = kakaoUri;
         this.userRepository = userRepository;;
         this.kakaoResponse = kakaoResponse;;
+    }
+
+
+    public static void alert(HttpServletResponse response, String msg) throws IOException{
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("<script>alert('"+msg+"');" +
+                "location.href='/';</script>");
+        out.flush();
+    }
+
+    @Transactional
+    public String kakaoLogin(HttpServletResponse response) {
+        try {
+            User user = userRepository.findByEmailAndProvider(kakaoResponse.getEmail(), kakaoResponse.getProvider())
+                    .orElseGet(() -> userRepository.save(User.builder()
+                            .email(kakaoResponse.getEmail())
+                            .username(kakaoResponse.getNickname())
+                            .provider("kakao")
+                            .roles(Collections.singletonList("ROLE_USER"))
+                            .build()));
+
+            //회원가입하고 저장
+            alert(response, "회원가입이완료되었습니다");
+            return JwtTokenProvider.create(user);
+
+        }catch (Exception e){
+            // 401 반환.
+            throw new Exception401("인증되지 않음.");
+        }
     }
 
     //인증코드로 token요청하기
@@ -152,21 +185,7 @@ public class KakaoService {
         }
     }
 
-    @Transactional
-    public String kakaoLogin() {
-        log.info("email"+kakaoResponse.getEmail());
-        User user = userRepository.findByEmailAndProvider(kakaoResponse.getEmail(), kakaoResponse.getProvider())
-                .orElseGet(() -> userRepository.save(User.builder()
-                        .email(kakaoResponse.getEmail())
-                        .username(kakaoResponse.getNickname())
-                        .provider("kakao")
-                        .roles(Collections.singletonList("ROLE_USER"))
-                        .build()));
 
-        log.info(JwtTokenProvider.create(user));
-        //회원가입하고 저장
-        return JwtTokenProvider.create(user);
-    }
     public void kakaoLogout(String accessToken) {
 
         log.info("logout 시작");
