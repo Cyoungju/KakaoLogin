@@ -11,9 +11,6 @@ public class KakaoUri {
     @Value("${kakao.api.key}")
     private String API_KEY; // REST API 키
 
-    @Value("${kakao.secret.key}")
-    private String SECRET_KEY;
-
     @Value("${kakao.redirect.uri}")
     private String REDIRECT_URI;
 }

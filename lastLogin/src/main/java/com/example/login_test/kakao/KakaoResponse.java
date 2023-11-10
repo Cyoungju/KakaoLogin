@@ -6,14 +6,23 @@ import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 @Getter
-@Setter
-@ToString
 @Component
 public class KakaoResponse {
     private Long id;
-    private String email;
-    private String nickname;
-    private String thumbnail_image;
-    private String properties;
-    private String provider;
+    private Properties properties;
+    private KakaoAccount kakao_account;
+
+    @Getter
+    @ToString
+    public static class KakaoAccount{
+        private String email;
+        private String name;
+        private String phone_number;
+    }
+
+    @Getter
+    @ToString
+    public static class Properties{
+        private String nickname;
+    }
 }

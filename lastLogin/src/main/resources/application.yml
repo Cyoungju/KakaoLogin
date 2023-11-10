@@ -1,4 +1,7 @@
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   # h2 setting info
   datasource:
     url: jdbc:h2:mem:youngTest # h2 접속정보
@@ -16,8 +19,6 @@ spring:
 
 kakao:
   api:
-    key: "5dfdad8618a37c87924127904d16737c"
-  secret:
-    key: "RqPVsc3ivCKBW5fhU8jfGeu23aZPVO3J"
+    key: "a7af160f851b8eae1dd5895ee4bfbb50"
   redirect:
-    uri : "http://localhost:8080/oauth/kakao"
+    uri : "http://localhost:8080/kakao/callback"

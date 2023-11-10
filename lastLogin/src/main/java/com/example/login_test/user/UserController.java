@@ -2,9 +2,6 @@ package com.example.login_test.user;
 
 import com.example.login_test.core.security.JwtTokenProvider;
 import com.example.login_test.core.utils.ApiUtils;
-import com.example.login_test.kakao.KakaoResponse;
-import com.example.login_test.kakao.KakaoService;
-import com.example.login_test.kakao.KakaoToken;
 import com.example.login_test.kakao.KakaoUri;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -63,27 +60,3 @@ public class UserController {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
