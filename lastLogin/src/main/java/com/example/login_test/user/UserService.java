@@ -36,50 +36,36 @@ public class UserService {
     @Transactional
     public void join(UserRequest.JoinDTO requestDTO) {
         checkEmail(requestDTO.getEmail());
-//
-//        String encodedPassword = passwordEncoder.encode( requestDTO.getPassword());
-//
-//        requestDTO.setPassword(encodedPassword);
-
+        //String encodedPassword = passwordEncoder.encode( requestDTO.getPassword());
+        //requestDTO.setPassword(encodedPassword);
         try {
             userRepository.save(requestDTO.toEntity(passwordEncoder));
-
-//            SignUpMessageSender.sendMessage("", requestDTO.getPhoneNumber()
+//          SignUpMessageSender.sendMessage("", requestDTO.getPhoneNumber()
 //                ,"환영합니다. 회원가입이 완료되었습니다."); //회원가입 완료 문자 발송
-
         }catch (Exception e){
             throw new Exception500(e.getMessage());
         }
     }
-
-
-
     public String login(UserRequest.JoinDTO requestDTO) {
         // ** 인증 작업.
         try{
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                     = new UsernamePasswordAuthenticationToken(requestDTO.getEmail(), requestDTO.getPassword());
             //사용자의 이메일과 패스워드를 포함한 인증 토큰을 생성합
-
             Authentication authentication =  authenticationManager.authenticate(
                     usernamePasswordAuthenticationToken
             );
             //사용자가 제공한 이메일과 비밀번호로 사용자를 인증하려고 하는것
-
             // ** 인증 완료 값을 받아온다.
             CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
 
             // ** 토큰 발급 - 이 JWT 토큰은 사용자 인증을 통해 확인된 사용자의 정보를 포함
             return JwtTokenProvider.create(customUserDetails.getUser());
-
         }catch (Exception e){
             // 401 반환.
             throw new Exception401("인증되지 않음.");
         }
     }
-
-
-
     public void findAll() {
         List<User> all = userRepository.findAll();
         for(User user : all){

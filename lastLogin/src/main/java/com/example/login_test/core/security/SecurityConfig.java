@@ -100,6 +100,14 @@ public class SecurityConfig {
                         .access("hasRole('ADMIN')")
                         .anyRequest().permitAll() //다른 주소는 모두 허용
         );
+        // 11. 로그인 관련 설정 (이 부분 추가)
+//        http.formLogin()
+//            .loginPage("/login") // 로그인 페이지 지정
+//            .permitAll();
+//
+//        // 12. 로그아웃 관련 설정 (이 부분 추가)
+//        http.logout()
+//            .permitAll();
 
         return http.build();
     }

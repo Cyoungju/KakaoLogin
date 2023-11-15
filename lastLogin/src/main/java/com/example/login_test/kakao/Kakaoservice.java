@@ -36,14 +36,18 @@ public class Kakaoservice {
 
     public String joinOrLogin(String code) {
         try {
-            KakaoToken token = getKakaoTokenInfo(code);
+            KakaoResponse.KakaoToken token = getKakaoTokenInfo(code);
             String accessToken = token.getAccess_token();
             String refreshToken = token.getRefresh_token();
 
             KakaoResponse kakaoResponse = getKakaoProfile(accessToken, refreshToken);
             KakaoResponse.KakaoAccount account = kakaoResponse.getKakao_account();
+            //KakaoResponse.KakaoToken kakaoToken = kakaoResponse.getKakao_Token();
             //KakaoResponse.Properties properties = kakaoResponse.getProperties();
 
+            log.info("kakaoResponse : {}", kakaoResponse);
+            log.info("account : {}", account);
+            //log.info("kakaoToken :{}", kakaoToken);
 
             // Check if a user with the provided email and provider already exists
             User existingUser = userRepository.findByEmailAndProvider(account.getEmail(), "kakao").orElse(null);
@@ -68,7 +72,7 @@ public class Kakaoservice {
 
     }
 
-    public KakaoToken getKakaoTokenInfo(String code) {
+    public KakaoResponse.KakaoToken getKakaoTokenInfo(String code) {
         try {
             String requestUrl = "https://kauth.kakao.com/oauth/token";
 
@@ -82,9 +86,10 @@ public class Kakaoservice {
             params.add("code", code);
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-            ResponseEntity<KakaoToken> responseEntity = restTemplate().postForEntity(requestUrl, request, KakaoToken.class);
+            ResponseEntity<KakaoResponse.KakaoToken> responseEntity = restTemplate().postForEntity(requestUrl, request, KakaoResponse.KakaoToken.class);
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
+
                 return responseEntity.getBody();
             } else {
                 log.error("Kakao 토큰 요청 실패. 응답: {}", responseEntity.getBody());
@@ -110,15 +115,38 @@ public class Kakaoservice {
         ResponseEntity<KakaoResponse> responseEntity;
         try {
             responseEntity = restTemplate().exchange(requestUrl, HttpMethod.GET, entity, KakaoResponse.class);
+            KakaoResponse kakaoResponse = responseEntity.getBody();
+
+//            if (kakaoResponse != null && kakaoResponse.getKakao_Token() == null) {
+//
+//                KakaoResponse.KakaoToken kakaoToken = new KakaoResponse.KakaoToken();
+//                kakaoToken.setToken_type(KakaoAccessToken);
+//                kakaoToken.setAccess_token(KakaoAccessToken);
+//                kakaoToken.setRefresh_token(KakaoRefreshToken);
+//                kakaoResponse.setKaksao_Token(kakaoToken);
+//            }
+            return kakaoResponse;
+
         } catch (HttpClientErrorException.Unauthorized e) {
             // 액세스 토큰이 만료되었을 경우
             KakaoAccessToken = refreshAccessToken(KakaoRefreshToken);
             headers.set("Authorization", "Bearer " + KakaoAccessToken);
             entity = new HttpEntity<>(headers);
             responseEntity = restTemplate().exchange(requestUrl, HttpMethod.GET, entity, KakaoResponse.class);
+
+
+            KakaoResponse kakaoResponse = responseEntity.getBody();
+//            if (kakaoResponse != null && kakaoResponse.getKakao_Token() == null) {
+//
+//                KakaoResponse.KakaoToken kakaoToken = new KakaoResponse.KakaoToken();
+//                kakaoToken.setToken_type(KakaoAccessToken);
+//                kakaoToken.setAccess_token(KakaoAccessToken);
+//                kakaoToken.setRefresh_token(KakaoRefreshToken);
+//                kakaoResponse.setKakao_Token(kakaoToken);
+//            }
+            return kakaoResponse;
         }
 
-        return responseEntity.getBody();
     }
 
     private String refreshAccessToken(String refreshToken) {

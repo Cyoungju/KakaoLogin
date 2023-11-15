@@ -28,10 +28,10 @@ public class KakaoController {
     public RedirectView callback(String code) {
         try {
             String jwt = kakaoService.joinOrLogin(code);
-            log.info(jwt);
+            log.info("JWT : {}", jwt);
             return new RedirectView("/");
         } catch (Exception e) {
-            log.error("카카오 회원가입 또는 로그인 중 오류 발생: {}", e.getMessage());
+            log.error("카카오 회원가입 또는 로그인 중 오류 발생 : {}", e.getMessage());
             // 오류 처리 또는 예외 메시지를 보여주는 페이지로 리다이렉트
             return new RedirectView("/error");
         }

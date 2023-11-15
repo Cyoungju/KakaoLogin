@@ -1,0 +1,55 @@
+
+/* member.css */
+
+/* 전체 회원 가입 폼을 감싸는 영역 스타일 */
+.memberWrap {
+  width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* 회원 가입 폼 내부 요소들의 스타일 */
+.memberWrap h1 {
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.memberWrap label {
+  display: block;
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.memberWrap input[type="email"],
+.memberWrap input[type="password"],
+.memberWrap input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.memberWrap input[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.memberWrap a img {
+  display: block;
+  margin-top: 20px;
+}
