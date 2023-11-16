@@ -1,4 +1,4 @@
-![image](https://github.com/Cyoungju/KakaoLogin/assets/101497925/1df0ee26-adf5-46c8-8bc3-6cbad17c697b)# 회고록
+# 회고록
 
 #### 23.11.02
 HttpConnection => RestTemplet으로 쓰는 방식으로 소스 수정 <br>
