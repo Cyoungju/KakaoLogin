@@ -13,7 +13,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import com.google.gson.Gson;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,12 +25,41 @@ public class Kakaoservice {
 
     private final UserRepository userRepository;
     private final KakaoUri kakaoUri;
+    private final KakaoResponse.KakaoToken kakaoToken;
+
 
     //카카오 통신을 위해 RestTemplate 스프링부트 Bean으로 등록
     @Bean
     public RestTemplate restTemplate(){
         return new RestTemplate();
     }
+
+    public void kakaoLogOut(String accessToken) {
+        try {
+            // 카카오 로그아웃을 위해 액세스 토큰을 사용하여 요청
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.set("Authorization", "Bearer " + accessToken);
+
+            String requestUrl = "https://kapi.kakao.com/v1/user/logout";
+
+            HttpEntity<KakaoResponse> entity = new HttpEntity<>(headers);
+            ResponseEntity<KakaoResponse> responseEntity = restTemplate().exchange(requestUrl, HttpMethod.POST, entity, KakaoResponse.class);
+
+            // 로그아웃이 성공하면 응답을 반환
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                // 여기서 해당 토큰을 만료시키는 작업을 수행
+                JwtTokenProvider.revoke(accessToken);
+            } else {
+                log.error("카카오 로그아웃 실패. 응답: {}", responseEntity.getBody());
+                throw new RuntimeException("카카오 로그아웃에 실패했습니다. HTTP 상태 코드: " + responseEntity.getStatusCodeValue());
+            }
+        } catch (Exception e) {
+            log.error("카카오 로그아웃 중 오류 발생: {}", e.getMessage());
+            throw new RuntimeException("카카오 로그아웃에 실패했습니다.", e);
+        }
+    }
+
 
 
     public String joinOrLogin(String code) {
@@ -40,14 +68,15 @@ public class Kakaoservice {
             String accessToken = token.getAccess_token();
             String refreshToken = token.getRefresh_token();
 
+            kakaoToken.setAccess_token(accessToken);
+            kakaoToken.setRefresh_token(refreshToken);
+
+
             KakaoResponse kakaoResponse = getKakaoProfile(accessToken, refreshToken);
             KakaoResponse.KakaoAccount account = kakaoResponse.getKakao_account();
-            //KakaoResponse.KakaoToken kakaoToken = kakaoResponse.getKakao_Token();
-            //KakaoResponse.Properties properties = kakaoResponse.getProperties();
 
             log.info("kakaoResponse : {}", kakaoResponse);
             log.info("account : {}", account);
-            //log.info("kakaoToken :{}", kakaoToken);
 
             // Check if a user with the provided email and provider already exists
             User existingUser = userRepository.findByEmailAndProvider(account.getEmail(), "kakao").orElse(null);
@@ -72,6 +101,8 @@ public class Kakaoservice {
 
     }
 
+
+    //토큰 정보
     public KakaoResponse.KakaoToken getKakaoTokenInfo(String code) {
         try {
             String requestUrl = "https://kauth.kakao.com/oauth/token";
@@ -85,11 +116,15 @@ public class Kakaoservice {
             params.add("redirect_uri", kakaoUri.getREDIRECT_URI());
             params.add("code", code);
 
+
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+            //postForEntity 메소드 사용 카카오 API의 토큰 요청 엔드포인트에 POST 요정 보냄
             ResponseEntity<KakaoResponse.KakaoToken> responseEntity = restTemplate().postForEntity(requestUrl, request, KakaoResponse.KakaoToken.class);
+            //ResponseEntity<KakaoResponse.KakaoToken> 형태로 받아옴
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
-
+                //KakaoResponse.KakaoToken 객체로 매핑하여 반환 - > 자바 객체로 변환하여 반환
+                // :: 객체로 매핑하면 응답 데이터의 각 필드를 객체의 속성으로 접근할 수 있음
                 return responseEntity.getBody();
             } else {
                 log.error("Kakao 토큰 요청 실패. 응답: {}", responseEntity.getBody());
@@ -104,6 +139,7 @@ public class Kakaoservice {
         }
     }
 
+    //사용자 정보
     public KakaoResponse getKakaoProfile(String KakaoAccessToken, String KakaoRefreshToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -116,15 +152,6 @@ public class Kakaoservice {
         try {
             responseEntity = restTemplate().exchange(requestUrl, HttpMethod.GET, entity, KakaoResponse.class);
             KakaoResponse kakaoResponse = responseEntity.getBody();
-
-//            if (kakaoResponse != null && kakaoResponse.getKakao_Token() == null) {
-//
-//                KakaoResponse.KakaoToken kakaoToken = new KakaoResponse.KakaoToken();
-//                kakaoToken.setToken_type(KakaoAccessToken);
-//                kakaoToken.setAccess_token(KakaoAccessToken);
-//                kakaoToken.setRefresh_token(KakaoRefreshToken);
-//                kakaoResponse.setKaksao_Token(kakaoToken);
-//            }
             return kakaoResponse;
 
         } catch (HttpClientErrorException.Unauthorized e) {
@@ -136,19 +163,12 @@ public class Kakaoservice {
 
 
             KakaoResponse kakaoResponse = responseEntity.getBody();
-//            if (kakaoResponse != null && kakaoResponse.getKakao_Token() == null) {
-//
-//                KakaoResponse.KakaoToken kakaoToken = new KakaoResponse.KakaoToken();
-//                kakaoToken.setToken_type(KakaoAccessToken);
-//                kakaoToken.setAccess_token(KakaoAccessToken);
-//                kakaoToken.setRefresh_token(KakaoRefreshToken);
-//                kakaoResponse.setKakao_Token(kakaoToken);
-//            }
             return kakaoResponse;
         }
 
     }
 
+    //카카오 엑세스 토큰 갱신
     private String refreshAccessToken(String refreshToken) {
         try {
             String url = "https://kauth.kakao.com/oauth/token";
@@ -173,4 +193,20 @@ public class Kakaoservice {
         }
 
     }
+
+
+    public KakaoResponse getKakaoLogout(String KakaoAccessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set("Authorization", "Bearer " + KakaoAccessToken);
+
+        String requestUrl = "https://kapi.kakao.com/v1/user/logout";
+
+       // MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        HttpEntity<KakaoResponse> entity = new HttpEntity<>(headers);
+        ResponseEntity<KakaoResponse> responseEntity = restTemplate().exchange(requestUrl, HttpMethod.POST, entity, KakaoResponse.class);
+            KakaoResponse kakaoResponse = responseEntity.getBody();
+            return kakaoResponse;
+    }
+
 }

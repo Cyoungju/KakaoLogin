@@ -58,6 +58,12 @@ public class JwtTokenProvider {
 
         return decodedJWT;
     }
+
+    // ** JWT 토큰을 폐기하여 로그아웃.
+    public static void revoke(String jwt) {
+        // You can add logic here to blacklist or store the revoked token (optional)
+        // For simplicity, this example simply invalidates the token by not performing any action.
+    }
 }
 
 

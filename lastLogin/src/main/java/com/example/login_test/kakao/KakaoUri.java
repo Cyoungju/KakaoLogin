@@ -13,4 +13,7 @@ public class KakaoUri {
 
     @Value("${kakao.redirect.uri}")
     private String REDIRECT_URI;
+
+    @Value("${kakao.logOutRedirect.uri}")
+    private String LOGOUT_REDIRECT_URI;
 }

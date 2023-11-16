@@ -22,3 +22,6 @@ kakao:
     key: "a7af160f851b8eae1dd5895ee4bfbb50"
   redirect:
     uri : "http://localhost:8080/kakao/callback"
+  logOutRedirect:
+    uri : "http://localhost:8080/kakao/logout"
+

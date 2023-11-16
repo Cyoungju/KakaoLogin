@@ -17,6 +17,13 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoUri kakaoUri;
+
+    @GetMapping("/")
+    public String main(Model model) {
+        model.addAttribute("api", kakaoUri.getAPI_KEY());
+        model.addAttribute("logOutRedirect", kakaoUri.getLOGOUT_REDIRECT_URI());
+        return "index";
+    }
     @GetMapping("/join")
     public String join(Model model) {
         model.addAttribute("api", kakaoUri.getAPI_KEY());

@@ -9,14 +9,14 @@ public class KakaoResponse {
     private KakaoToken kakao_Token;
     private KakaoAccount kakao_account;
 
-    @Getter @Setter @AllArgsConstructor @ToString @NoArgsConstructor
+    @Getter @Setter @AllArgsConstructor @ToString @NoArgsConstructor @Component
     public static class KakaoAccount{
         private String email;
         private String name;
         private String phone_number;
     }
 
-    @Getter @Setter @AllArgsConstructor @ToString @NoArgsConstructor
+    @Getter @Setter @AllArgsConstructor @ToString @NoArgsConstructor @Component
     public static class KakaoToken {
         String token_type;
         String access_token;
@@ -26,5 +26,6 @@ public class KakaoResponse {
         String scope;
         String code;
     }
+
 
 }
