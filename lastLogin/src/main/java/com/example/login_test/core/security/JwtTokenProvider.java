@@ -8,8 +8,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.login_test.user.StringArrayConverter;
 import com.example.login_test.user.User;
-
-import java.security.SignatureException;
+ 
 import java.util.Date;
 
 public class JwtTokenProvider {
