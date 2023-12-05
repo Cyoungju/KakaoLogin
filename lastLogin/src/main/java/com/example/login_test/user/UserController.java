@@ -12,24 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class UserController {
 
     private final UserService userService;
-    private final KakaoUri kakaoUri;
 
-    @GetMapping("/")
-    public String main(Model model) {
-        model.addAttribute("api", kakaoUri.getAPI_KEY());
-        model.addAttribute("logOutRedirect", kakaoUri.getLOGOUT_REDIRECT_URI());
-        return "index";
-    }
-    @GetMapping("/join")
-    public String join(Model model) {
-        model.addAttribute("api", kakaoUri.getAPI_KEY());
-        model.addAttribute("redirect", kakaoUri.getREDIRECT_URI());
-        return "join"; // "join.html" 파일을 렌더링
-    }
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Error error) {
         userService.join(requestDTO);
@@ -39,10 +26,6 @@ public class UserController {
     public ResponseEntity<?> check(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Error error) {
         userService.checkEmail(requestDTO.getEmail());
         return ResponseEntity.ok( ApiUtils.success(null) );
-    }
-    @GetMapping("/login")
-    public String login() {
-        return "login"; // "login.html" 파일을 렌더링
     }
 
     @PostMapping("/login")
