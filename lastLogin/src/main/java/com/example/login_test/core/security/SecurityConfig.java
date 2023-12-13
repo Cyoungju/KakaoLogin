@@ -20,6 +20,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+/**
+ * Spring Security 환경 설정을 구성하기 위한 클래스
+ * 웹 서비스가 로드 될때 Spring Container 의해 관리가 되는 클래스
+ * 사용자에 대한 '인증', '인가'에 대한 구성을 Bean 메서드로 주입함
+ *
+ */
+
+
 @Slf4j
 @RequiredArgsConstructor
 @Configuration // ** 현재 클래스를 (설정 클래스)로 설정
@@ -29,6 +37,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -58,9 +67,14 @@ public class SecurityConfig {
         }
     }
 
+    /*
+    * HTTP에 대해서 '인증'과 '인가'를 담당하는 메서드
+    * 필터를 통해 인증 방식과 인증 절차에 대해서 등록하며 설정을 담당하는 메서드
+    * */
+
     @Bean // 스프링 빈으로 등록
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // 1. CSRF 해제
+        // 1. CSRF 해제 - 서버에 인증정보를 저장하지 않기때문에
         http.csrf().disable(); // postman 접근해야 함!! - CSR 할때!!
 
         // 2. iframe 거부 설정

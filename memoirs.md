@@ -13,7 +13,7 @@ RestTemplet => webclient 로 소스 코드 수정 완료 <br>
 (RestTemplate은 Spring 5부터 deprecated되었으며, WebClient는 Non-blocking I/O를 지원하고 더욱 유연한 API를 제공함.)<br>
 로그아웃 기능 구현 완료<br><br>
 리다이렉트 주소와 mapping 주소의 불일치로 500에러뜸 <br>
-로그아웃 기능 이슈 해결 완료 
+로그아웃 기능 이슈 해결 완료
 <Br><Br><Br>
 
 
@@ -66,4 +66,3 @@ session에 저장하지 않고 jwt토큰을 지워서 로그아웃 기능실행�
 코드리팩토링 진행<br>
 session에 저장함<br>
 에러페이지 작업
-
