@@ -1,8 +1,8 @@
 # 🌱 Spring boot login
 Spring boot로 Login /Join 구현하기<br>
-KakaoLogin Rest Api 로그인 연동
+KakaoLogin Rest Api 로그인 연동<br>
 
-<br><br>
+
 ## 개발환경
 - IDE: IntelliJ IDEA Community
 - Gradle - Groovy, Java 17
