@@ -5,12 +5,12 @@ KakaoLogin Rest Api 로그인 연동<br>
 
 ## 개발환경
 - IDE: IntelliJ IDEA Community
-- Gradle - Groovy, Java 17
+- Gradle - Java 11
 - Jar 11
 - Spring Boot 2.7.6
 - jvm.convert 3.3.2
 - JDK 11
-- mysql 8.0.35
+- H2 Database
 - Lombok
 - Spring Web
 - Spring Data JPA
